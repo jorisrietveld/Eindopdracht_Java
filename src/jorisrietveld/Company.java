@@ -1,5 +1,7 @@
 package jorisrietveld;
 
+import com.sun.org.apache.regexp.internal.RE;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -125,15 +127,7 @@ public class Company
      */
     void printSpeedBoatWithHighestFuelUse()
     {
-        Rental highestFuel = new Rental().setUsedFuel( 0 );
-
-        for( Rental rental : rentals )
-        {
-            if( !rental.isRented() && rental.getUsedFuel() > highestFuel.getUsedFuel() )
-            {
-                highestFuel = rental;
-            }
-        }
+        Rental highestFuel = Collections.max( rentals, Comparator.comparing( Rental::getUsedFuel ) );
 
         System.out.println( String.format(
                 "The speedboat with the highest fuel use is: %s it was rented by: %s it used: %d liters of fuel.",
@@ -167,9 +161,13 @@ public class Company
      */
     void printShortestRentedSpeedboat()
     {
+        Rental shortestRentTime = Collections.min( rentals, Comparator.comparing( Rental::getTimeRented ) );
+
         System.out.println( String.format(
-                "The shortest rent time is: %s",
-                rentals.stream().mapToInt( Rental::getTimeRented ).min().orElse( 0 )
+                "The shortest rent time is: %s for speedboat: %s it was rented by: %s",
+                shortestRentTime.getTimeRented(),
+                shortestRentTime.getBoatId(),
+                shortestRentTime.getCustomerName()
         ));
     }
 
